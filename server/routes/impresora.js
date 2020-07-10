@@ -13,8 +13,7 @@ app.get('/impresora', (req, res) => {
 
     let limite = req.query.limite || 0;
     limite = Number(limite);
-    //              Filtrar
-    Impresora.find({}, 'nombre email role estado')
+    Impresora.find({})
         .skip(desde)
         .limit(limite)
         .exec((err, impresoras) => {
@@ -29,15 +28,6 @@ app.get('/impresora', (req, res) => {
                 ok: true,
                 impresora: impresoras
             });
-            /*
-            Impresora.count({ estado: true }, (err, conteo) => {
-                res.json({
-                    ok: true,
-                    usuarios: impresoras,
-                    numero: conteo
-                });
-            });
-            */
         });
 });
 
@@ -66,6 +56,50 @@ app.post('/impresora', (req, res) => {
         });
     });
 });
+
+app.put('/impresora/:id', (req, res) => {
+    let id = req.params.id;
+    let body = _.pick(req.body, ['modelo', 'color', 'ip', 'precio']);
+    Impresora.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' }, (err, usuarioDB) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+        res.json({
+            ok: true,
+            impresora: usuarioDB
+        });
+    });
+});
+
+app.delete('/impresora/:id', (req, res) => {
+    let id = req.params.id;
+    Impresora.findByIdAndDelete(id, (err, impresoraEliminado) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+        if (!impresoraEliminado) {
+            res.json({
+                ok: false,
+                err: {
+                    message: "Impresora no encontradada",
+                },
+            });
+        } else {
+            res.json({
+                ok: true,
+                usuario: impresoraEliminado
+            });
+        }
+
+    });
+});
+
 
 
 module.exports = app;

@@ -38,14 +38,14 @@ let impresoraSchema = new Schema({
 
 impresoraSchema.plugin(uniqueValidator, { message: '{PATH} debe ser único' })
 
-/*
-usurarioSchema.methods.toJSON = function() {
+
+impresoraSchema.methods.toJSON = function() {
     let user = this;
     let userObject = user.toObject();
-    delete userObject.password;
+    delete userObject.contador;
 
     return userObject
 }
-*/
+
 
 module.exports = mongoose.model('impresora', impresoraSchema);
